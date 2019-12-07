@@ -19,10 +19,13 @@ on:
   #   types: [published]
 
 jobs:
+
   build:
+
     runs-on: ubuntu-latest
 
     steps:
+
       - name: Checkout
         uses: actions/checkout@master
         with:
@@ -34,23 +37,8 @@ jobs:
         run: |
           docker rmi `docker images -q`
           echo "Deleting files, please wait ..."
-          sudo rm -rf \
-            /usr/share/dotnet \
-            /etc/mysql \
-            /etc/php
-          sudo -E apt-get -y purge \
-            azure-cli \
-            ghc* \
-            zulu* \
-            hhvm \
-            llvm* \
-            firefox \
-            google* \
-            dotnet* \
-            powershell \
-            openjdk* \
-            mysql* \
-            php*
+          sudo rm -rf /usr/share/dotnet /etc/mysql /etc/php
+          sudo -E apt-get -y purge azure-cli ghc* zulu* hhvm llvm* firefox google* dotnet* powershell openjdk* mysql* php*
           sudo -E apt-get update
           sudo -E apt-get -y install build-essential asciidoc binutils bzip2 gawk gettext git libncurses5-dev libz-dev patch unzip zlib1g-dev lib32gcc1 libc6-dev-i386 subversion flex uglifyjs git-core gcc-multilib p7zip p7zip-full msmtp libssl-dev texinfo libglib2.0-dev xmlto qemu-utils upx libelf-dev autoconf automake libtool autopoint device-tree-compiler
           sudo -E apt-get -y autoremove --purge
@@ -100,11 +88,11 @@ jobs:
           # 
 
           # 编译x64固件:
-          # cat >> .config <<EOF
-          # CONFIG_TARGET_x86=y
-          # CONFIG_TARGET_x86_64=y
+          cat >> .config <<EOF
+          CONFIG_TARGET_x86=y
+          CONFIG_TARGET_x86_64=y
           CONFIG_TARGET_x86_64_Generic=y
-          # EOF
+          EOF
 
           # 固件压缩:
           # cat >> .config <<EOF
@@ -168,21 +156,21 @@ jobs:
           # EOF
 
           # LuCI主题:
-          # cat >> .config <<EOF
+          cat >> .config <<EOF
           CONFIG_PACKAGE_luci-theme-argon=y
           CONFIG_PACKAGE_luci-theme-netgear=y
-          # EOF
+          EOF
 
           # 常用软件包:
-          # cat >> .config <<EOF
+          cat >> .config <<EOF
           # CONFIG_PACKAGE_curl=y
           # CONFIG_PACKAGE_htop=y
-          # CONFIG_PACKAGE_nano=y
+          CONFIG_PACKAGE_nano=y
           # CONFIG_PACKAGE_screen=y
           # CONFIG_PACKAGE_tree=y
           # CONFIG_PACKAGE_vim-fuller=y
           # CONFIG_PACKAGE_wget=y
-          # EOF
+          EOF
 
           # 取消编译VMware镜像以及镜像填充 (不要删除被缩进的注释符号):
           # cat >> .config <<EOF
@@ -213,6 +201,7 @@ jobs:
           rm -rf ./artifact/
           mkdir -p ./artifact/
           find ./bin/targets/ -name "*combined*img*" | xargs -i mv -f {} ./artifact/
+          find ./bin/targets/ -name "*efi*img*" | xargs -i mv -f {} ./artifact/
           find ./bin/targets/ -name "*sysupgrade*bin*" | xargs -i mv -f {} ./artifact/
 
       - name: Upload artifact
